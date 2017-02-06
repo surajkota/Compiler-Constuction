@@ -133,7 +133,7 @@ public void testwithprining() throws IllegalCharException, IllegalNumberExceptio
 	//String input = "00123integer abc\n123 789 99 hello if{a==b;}/**/";
 	//String input = "==!=";
 	//String input = "/*...*/a/***/\nbc!/ /*/ /**/ !\nd/*.**/";
-	String input = "|;|--->->-|->";
+	String input = "|;|--->->-|->lu";
 	//System.out.println(input.length()+ " " + input);
 	Scanner scanner = new Scanner(input);
 	//thrown.expect(IllegalCharException.class);

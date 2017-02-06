@@ -324,7 +324,10 @@ public class Scanner {
                 		state = State.START;
                 	}
                 	else{
-                		throw new IllegalCharException("illegal char " +ch+" at pos "+pos);
+                		tokens.add(new Token(Kind.OR, startPos, 1));
+                		tokens.add(new Token(Kind.MINUS, startPos+1, 1));
+                		state = State.START;
+                		//throw new IllegalCharException("illegal char " +ch+" at pos "+pos);
                 	}
             	}
             	else{
