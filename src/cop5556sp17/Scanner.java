@@ -3,6 +3,10 @@ package cop5556sp17;
 import java.util.ArrayList;
 import java.util.Collections;
 
+//import cop5556sp17.Scanner.Kind;
+
+//import cop5556sp17.Scanner.Kind;
+
 public class Scanner {
 	/**
 	 * Kind enum
@@ -132,6 +136,26 @@ public class Scanner {
 				}
 			}
 			return tokenvalue;
+		}
+
+		public boolean isKind(Kind k) {
+			// TODO Auto-generated method stub
+			if(this.kind == k){
+				return true;
+			}
+			else{
+				return false;				
+			}
+		}
+		
+		public boolean isKind(Kind... kinds) {
+			// TODO Auto-generated method stub
+			for(Kind k : kinds){
+				if (this.kind == k) {
+					return true;
+				}
+			}
+			return false;				
 		}
 		
 	}

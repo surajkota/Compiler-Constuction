@@ -138,7 +138,7 @@ public void testwithprining() throws IllegalCharException, IllegalNumberExceptio
 	Scanner scanner = new Scanner(input);
 	//thrown.expect(IllegalCharException.class);
 	scanner.scan();		
-	scanner.printall();
+	//scanner.printall();
 	/*
 	 * Scanner.Token token1 = scanner.nextToken();
 	assertEquals(Scanner.Kind.KW_IF, token1.kind);
