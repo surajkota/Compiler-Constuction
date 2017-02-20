@@ -123,7 +123,7 @@ public class Parser {
 			break;
 		default:
 			//you will want to provide a more useful error message
-			throw new SyntaxException("illegal factor");
+			throw new SyntaxException("Exception @factor" + "saw " + t.kind + "expected First-Factor"  + " tokenNum: " + scanner.tokenNum + " & token at pos: " + t.pos + " "+ t.getLinePos().toString() );
 		}
 	}
 
@@ -154,7 +154,7 @@ public class Parser {
 			}
 			block();
 		}else{
-			throw new SyntaxException("illegal factor");
+			throw new SyntaxException("Exception @program " + "saw " + t.kind + " expected LBRACE or First-paramDec"  + " tokenNum: " + scanner.tokenNum + " & token at pos: " + t.pos + " "+ t.getLinePos().toString() );
 		}
 		//throw new UnimplementedFeatureException();
 	}
@@ -172,7 +172,7 @@ public class Parser {
 			break;
 		default:
 			//you will want to provide a more useful error message
-			throw new SyntaxException("illegal paramDec");
+			throw new SyntaxException("Exception @paramdec " + "saw " + t.kind + " expected First-paramDec"  + " tokenNum: " + scanner.tokenNum + " & token at pos: " + t.pos + " "+ t.getLinePos().toString());
 		}
 		match(IDENT);
 		//throw new UnimplementedFeatureException();
@@ -191,7 +191,7 @@ public class Parser {
 			break;
 		default:
 			//you will want to provide a more useful error message
-			throw new SyntaxException("illegal dec");
+			throw new SyntaxException("Exception @dec " + "saw " + t.kind + " expected First-paramDec"  + " tokenNum: " + scanner.tokenNum + " & token at pos: " + t.pos + " "+ t.getLinePos().toString());
 		}
 		match(IDENT);
 		//throw new UnimplementedFeatureException();
@@ -227,7 +227,7 @@ public class Parser {
 			match(SEMI);
 		}else{
 			//you will want to provide a more useful error message
-			throw new SyntaxException("illegal statement");
+			throw new SyntaxException("Exception @statement " + "saw " + t.kind + " expected op_sleep or First-while/if/chain/assign"  + " tokenNum: " + scanner.tokenNum + " & token at pos: " + t.pos + " "+ t.getLinePos().toString());
 		}
 		//throw new UnimplementedFeatureException();
 	}
@@ -250,7 +250,7 @@ public class Parser {
 			consume();
 			arg();
 		}else{
-			throw new SyntaxException("illegal chain element");
+			throw new SyntaxException("Exception @chainelem " + "saw " + t.kind + " expected ident or First-Filterop/frameop/imageop"  + " tokenNum: " + scanner.tokenNum + " & token at pos: " + t.pos + " "+ t.getLinePos().toString() );
 		}
 		//throw new UnimplementedFeatureException();
 	}
@@ -300,7 +300,7 @@ public class Parser {
 		if (t.isKind(kind)) {
 			return consume();
 		}
-		throw new SyntaxException("saw " + t.kind + "expected " + kind);
+		throw new SyntaxException("@match saw " + t.kind + " expected " + kind);
 	}
 
 	/**
@@ -322,7 +322,11 @@ public class Parser {
 		}
 		
 		//TODO complete the error
-		throw new SyntaxException("saw " + t.kind + "expected " );
+		StringBuilder expected=new StringBuilder();
+		for(Kind k: kinds){
+			expected.append(k + " ");
+		}
+		throw new SyntaxException("@match2 saw " + t.kind + "expected one of: " + expected);
 		//return false; //replace this statement
 	}
 
