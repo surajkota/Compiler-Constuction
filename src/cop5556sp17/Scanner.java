@@ -123,7 +123,8 @@ public class Scanner {
 		 * @throws NumberFormatException
 		 * @throws IllegalNumberException 
 		 */
-		public int intVal() throws NumberFormatException, IllegalNumberException{
+		//public int intVal() throws NumberFormatException, IllegalNumberException{
+		public int intVal() throws NumberFormatException {
 			//TODO IMPLEMENT THIS
 			int tokenvalue = 0;
 			if(this.kind==Kind.INT_LIT){
@@ -132,7 +133,8 @@ public class Scanner {
 					tokenvalue = Integer.parseInt(chars.substring(this.pos, this.pos+this.length));
 					
 				}catch(Exception E){
-					throw new IllegalNumberException("Number: "+chars.substring(this.pos, this.pos+this.length)+" out of int bounds at pos "+this.pos);
+					throw E;
+					//throw new IllegalNumberException("Number: "+chars.substring(this.pos, this.pos+this.length)+" out of int bounds at pos "+this.pos);
 				}
 			}
 			return tokenvalue;
@@ -157,7 +159,49 @@ public class Scanner {
 			}
 			return false;				
 		}
-		
+		@Override
+		  public int hashCode() {
+		   final int prime = 31;
+		   int result = 1;
+		   result = prime * result + getOuterType().hashCode();
+		   result = prime * result + ((kind == null) ? 0 : kind.hashCode());
+		   result = prime * result + length;
+		   result = prime * result + pos;
+		   return result;
+		  }
+
+		  @Override
+		  public boolean equals(Object obj) {
+		   if (this == obj) {
+		    return true;
+		   }
+		   if (obj == null) {
+		    return false;
+		   }
+		   if (!(obj instanceof Token)) {
+		    return false;
+		   }
+		   Token other = (Token) obj;
+		   if (!getOuterType().equals(other.getOuterType())) {
+		    return false;
+		   }
+		   if (kind != other.kind) {
+		    return false;
+		   }
+		   if (length != other.length) {
+		    return false;
+		   }
+		   if (pos != other.pos) {
+		    return false;
+		   }
+		   return true;
+		  }
+
+		 
+
+		  private Scanner getOuterType() {
+		   return Scanner.this;
+		  }
 	}
 
 	 

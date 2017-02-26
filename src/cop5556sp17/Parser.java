@@ -3,7 +3,11 @@ package cop5556sp17;
 import cop5556sp17.Scanner.Kind;
 import static cop5556sp17.Scanner.Kind.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import cop5556sp17.Scanner.Token;
+import cop5556sp17.AST.*;
 
 public class Parser {
 
@@ -57,67 +61,81 @@ public class Parser {
 	 * 
 	 * @throws SyntaxException
 	 */
-	void parse() throws SyntaxException {
-		program();
+	ASTNode parse() throws SyntaxException {
+		ASTNode returnobj = program();
 		matchEOF();
-		return;
+		return returnobj;
 	}
 
-	void expression() throws SyntaxException {
+	Expression expression() throws SyntaxException {
 		//TODO
-		term();
+		Token ftok = t;
+		Expression returnobj = term();
 		while(t.isKind(relOp)){
+			Token opr = t;
 			consume();
-			term();
+			returnobj = new BinaryExpression(ftok, returnobj , opr, term());
 		}
-		
+		return returnobj;
 		//throw new UnimplementedFeatureException();
 	}
 
-	void term() throws SyntaxException {
+	Expression term() throws SyntaxException {
 		//TODO
-		elem();
+		Token ftok = t;
+		Expression returnobj = elem();
 		while(t.isKind(weakOp)){
+			Token opr = t;
 			consume();
-			elem();
+			returnobj = new BinaryExpression(ftok, returnobj , opr, elem());
 		}
+		return returnobj;
 		//throw new UnimplementedFeatureException();
 	}
 
-	void elem() throws SyntaxException {
+	Expression elem() throws SyntaxException {
 		//TODO
-		factor();
+		Token ftok = t;
+		Expression returnobj = factor();
 		while(t.isKind(strongOp)){
+			Token opr = t;
 			consume();
-			factor();
+			returnobj = new BinaryExpression(ftok, returnobj , opr, factor());
 		}
+		return returnobj;
 		//throw new UnimplementedFeatureException();
 	}
 
-	void factor() throws SyntaxException {
+	Expression factor() throws SyntaxException {
+		Token ftok = t;
+		Expression returnobj = null;
 		Kind kind = t.kind;
 		switch (kind) {
 		case IDENT: {
 			consume();
+			returnobj = new IdentExpression(ftok);
 		}
 			break;
 		case INT_LIT: {
 			consume();
+			returnobj = new IntLitExpression(ftok);
 		}
 			break;
 		case KW_TRUE:
 		case KW_FALSE: {
 			consume();
+			returnobj = new BooleanLitExpression(ftok);
 		}
 			break;
 		case KW_SCREENWIDTH:
 		case KW_SCREENHEIGHT: {
 			consume();
+			returnobj = new ConstantExpression(ftok);
 		}
 			break;
 		case LPAREN: {
 			consume();
-			expression();
+			returnobj = expression();
 			match(RPAREN);
 		}
 			break;
@@ -125,42 +143,53 @@ public class Parser {
 			//you will want to provide a more useful error message
 			throw new SyntaxException("Exception @factor" + "saw " + t.kind + "expected First-Factor"  + " tokenNum: " + scanner.tokenNum + " & token at pos: " + t.pos + " "+ t.getLinePos().toString() );
 		}
+		return returnobj;
 	}
 
-	void block() throws SyntaxException {
+	Block block() throws SyntaxException {
 		//TODO
+		Token ftok = t;
+		ArrayList<Dec> decs = new ArrayList<Dec>();
+		ArrayList<Statement> statements = new ArrayList<Statement>();
+		//TODO clarify the type to be used
 		match(LBRACE);
 		while(t.isKind(FIRST_dec) || t.isKind(FIRST_statement)){
 			if(t.isKind(FIRST_dec)){
-				dec();
+				decs.add(dec());
 			}else{
-				statement();
+				statements.add(statement());
 			}
 		}
 		match(RBRACE);
 		//throw new UnimplementedFeatureException();
+		return new Block(ftok, decs, statements);
 	}
 
-	void program() throws SyntaxException {
+	Program program() throws SyntaxException {
 		//TODO
+		Token ftok = t;
 		match(IDENT);
+		ArrayList<ParamDec> params = new ArrayList<ParamDec>();
+		Block block_followparamdec;
 		if(t.isKind(LBRACE)){
-			block();
+			block_followparamdec = block();
 		}else if(t.isKind(FIRST_paramDec)){
-			paramDec();
+			params.add(paramDec());
 			while(t.isKind(COMMA)){
 				consume();
-				paramDec();
+				params.add(paramDec());
 			}
-			block();
+			block_followparamdec = block();
 		}else{
 			throw new SyntaxException("Exception @program " + "saw " + t.kind + " expected LBRACE or First-paramDec"  + " tokenNum: " + scanner.tokenNum + " & token at pos: " + t.pos + " "+ t.getLinePos().toString() );
 		}
+		return new Program(ftok, params, block_followparamdec);
 		//throw new UnimplementedFeatureException();
 	}
 
-	void paramDec() throws SyntaxException {
+	ParamDec paramDec() throws SyntaxException {
 		//TODO
+		Token ftok = t;
 		Kind kind = t.kind;
 		switch (kind) {
 		case KW_URL:
@@ -174,12 +203,15 @@ public class Parser {
 			//you will want to provide a more useful error message
 			throw new SyntaxException("Exception @paramdec " + "saw " + t.kind + " expected First-paramDec"  + " tokenNum: " + scanner.tokenNum + " & token at pos: " + t.pos + " "+ t.getLinePos().toString());
 		}
+		Token identtoken = t;
 		match(IDENT);
+		return new ParamDec(ftok, identtoken);
 		//throw new UnimplementedFeatureException();
 	}
 
-	void dec() throws SyntaxException {
+	Dec dec() throws SyntaxException {
 		//TODO
+		Token ftok = t;
 		Kind kind = t.kind;
 		switch (kind) {
 		case KW_INTEGER:
@@ -193,82 +225,115 @@ public class Parser {
 			//you will want to provide a more useful error message
 			throw new SyntaxException("Exception @dec " + "saw " + t.kind + " expected First-paramDec"  + " tokenNum: " + scanner.tokenNum + " & token at pos: " + t.pos + " "+ t.getLinePos().toString());
 		}
+		Token identtoken = t;
 		match(IDENT);
+		return new Dec(ftok, identtoken);
 		//throw new UnimplementedFeatureException();
 	}
 
-	void statement() throws SyntaxException {
+	Statement statement() throws SyntaxException {
 		//TODO
+		Token ftok = t;
+		Statement returnobj = null;
 		Kind kind = t.kind;
 		if(kind == OP_SLEEP){
 			consume();
-			expression();
+			Expression sleep_followexpression = expression();
 			match(SEMI);
-		}else if(kind == KW_WHILE || kind == KW_IF){
+			returnobj = new SleepStatement(ftok, sleep_followexpression);
+		}else if(kind == KW_WHILE){
 			consume();
 			match(LPAREN);
-			expression();
+			Expression while_followexpression = expression();
 			match(RPAREN);
-			block();
+			Block while_followblock = block();
+			returnobj = new WhileStatement(ftok, while_followexpression, while_followblock); 
+		}else if(kind == KW_IF){
+			consume();
+			match(LPAREN);
+			Expression if_followexpression = expression();
+			match(RPAREN);
+			Block if_followblock = block();
+			returnobj = new IfStatement(ftok, if_followexpression, if_followblock);
 		}else if(t.isKind(FIRST_chain)){
 			if(t.isKind(IDENT)){
 				Token next_t = scanner.peek();
 				if(next_t.isKind(ASSIGN)){
 					consume();
 					match(ASSIGN);
-					expression();
+					Expression assign_exprfollow = expression();
+					returnobj = new AssignmentStatement(ftok, new IdentLValue(ftok), assign_exprfollow);
 				}
 				else{
-					chain();
+					returnobj = chain();
 				}
 			}else{
-				chain();
+				returnobj = chain();
 			}
 			match(SEMI);
 		}else{
 			//you will want to provide a more useful error message
 			throw new SyntaxException("Exception @statement " + "saw " + t.kind + " expected op_sleep or First-while/if/chain/assign"  + " tokenNum: " + scanner.tokenNum + " & token at pos: " + t.pos + " "+ t.getLinePos().toString());
 		}
+		return returnobj;
 		//throw new UnimplementedFeatureException();
 	}
 
-	void chain() throws SyntaxException {
+	Chain chain() throws SyntaxException {
 		//TODO
-		chainElem();match(arrowOp);chainElem();
+		Token ftok = t;
+		Chain returnobj = chainElem();
+		Token arrow = t;match(arrowOp);
+		returnobj = new BinaryChain(ftok, returnobj, arrow, chainElem());
 		while(t.isKind(arrowOp)){
+			arrow = t;
 			consume();
-			chainElem();
+			returnobj = new BinaryChain(ftok, returnobj, arrow, chainElem());
 		}
+		return returnobj;
 		//throw new UnimplementedFeatureException();
 	}
 
-	void chainElem() throws SyntaxException {
+	ChainElem chainElem() throws SyntaxException {
 		//TODO
+		ChainElem returnobj = null;
+		Token ftok = t;
 		if(t.isKind(IDENT)){
 			consume();
-		}else if(t.isKind(filterOp) || t.isKind(frameOp) || t.isKind(imageOp)){
+			returnobj = new IdentChain(ftok);
+		}else if(t.isKind(filterOp)){
 			consume();
-			arg();
+			returnobj = new FilterOpChain(ftok, arg());
+		}else if(t.isKind(frameOp)){
+			consume();
+			returnobj = new FilterOpChain(ftok, arg());
+		}else if(t.isKind(imageOp)){
+			consume();
+			returnobj = new FilterOpChain(ftok, arg());
 		}else{
 			throw new SyntaxException("Exception @chainelem " + "saw " + t.kind + " expected ident or First-Filterop/frameop/imageop"  + " tokenNum: " + scanner.tokenNum + " & token at pos: " + t.pos + " "+ t.getLinePos().toString() );
 		}
+		return returnobj;
 		//throw new UnimplementedFeatureException();
 	}
 
-	void arg() throws SyntaxException {
+	Tuple arg() throws SyntaxException {
 		//TODO
+		Token ftok = t;
+		List<Expression> exprList = new ArrayList<Expression>(); 
 		if(t.isKind(LPAREN)){
 			consume();
 			expression();
 			while(t.isKind(COMMA)){
 				consume();
-				expression();
+				exprList.add(expression());
 			}
 			match(RPAREN);
 		}
 		else{
-			return;
+			//do nothing now return;
 		}
+		return new Tuple(ftok, exprList);
 		//throw new UnimplementedFeatureException();
 	}
 
