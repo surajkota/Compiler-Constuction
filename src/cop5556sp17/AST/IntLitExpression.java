@@ -1,12 +1,13 @@
 package cop5556sp17.AST;
 
+import cop5556sp17.Scanner.IllegalNumberException;
 import cop5556sp17.Scanner.Token;
 
 public class IntLitExpression extends Expression {
 
 	public final int value;
 
-	public IntLitExpression(Token firstToken) {
+	public IntLitExpression(Token firstToken) throws NumberFormatException, IllegalNumberException {
 		super(firstToken);
 		value = firstToken.intVal();
 	}

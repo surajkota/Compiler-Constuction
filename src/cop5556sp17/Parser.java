@@ -1,5 +1,6 @@
 package cop5556sp17;
 
+import cop5556sp17.Scanner.IllegalNumberException;
 import cop5556sp17.Scanner.Kind;
 import static cop5556sp17.Scanner.Kind.*;
 
@@ -60,14 +61,16 @@ public class Parser {
 	 * Check for EOF (i.e. no trailing junk) when finished
 	 * 
 	 * @throws SyntaxException
+	 * @throws IllegalNumberException 
+	 * @throws NumberFormatException 
 	 */
-	ASTNode parse() throws SyntaxException {
+	ASTNode parse() throws SyntaxException, NumberFormatException, IllegalNumberException {
 		ASTNode returnobj = program();
 		matchEOF();
 		return returnobj;
 	}
 
-	Expression expression() throws SyntaxException {
+	Expression expression() throws SyntaxException, NumberFormatException, IllegalNumberException {
 		//TODO
 		Token ftok = t;
 		Expression returnobj = term();
@@ -80,7 +83,7 @@ public class Parser {
 		//throw new UnimplementedFeatureException();
 	}
 
-	Expression term() throws SyntaxException {
+	Expression term() throws SyntaxException, NumberFormatException, IllegalNumberException {
 		//TODO
 		Token ftok = t;
 		Expression returnobj = elem();
@@ -93,7 +96,7 @@ public class Parser {
 		//throw new UnimplementedFeatureException();
 	}
 
-	Expression elem() throws SyntaxException {
+	Expression elem() throws SyntaxException, NumberFormatException, IllegalNumberException {
 		//TODO
 		Token ftok = t;
 		Expression returnobj = factor();
@@ -106,7 +109,7 @@ public class Parser {
 		//throw new UnimplementedFeatureException();
 	}
 
-	Expression factor() throws SyntaxException {
+	Expression factor() throws SyntaxException, NumberFormatException, IllegalNumberException {
 		Token ftok = t;
 		Expression returnobj = null;
 		Kind kind = t.kind;
@@ -146,7 +149,7 @@ public class Parser {
 		return returnobj;
 	}
 
-	Block block() throws SyntaxException {
+	Block block() throws SyntaxException, NumberFormatException, IllegalNumberException {
 		//TODO
 		Token ftok = t;
 		ArrayList<Dec> decs = new ArrayList<Dec>();
@@ -165,12 +168,12 @@ public class Parser {
 		return new Block(ftok, decs, statements);
 	}
 
-	Program program() throws SyntaxException {
+	Program program() throws SyntaxException, NumberFormatException, IllegalNumberException {
 		//TODO
 		Token ftok = t;
 		match(IDENT);
 		ArrayList<ParamDec> params = new ArrayList<ParamDec>();
-		Block block_followparamdec;
+		Block block_followparamdec = null;
 		if(t.isKind(LBRACE)){
 			block_followparamdec = block();
 		}else if(t.isKind(FIRST_paramDec)){
@@ -231,7 +234,7 @@ public class Parser {
 		//throw new UnimplementedFeatureException();
 	}
 
-	Statement statement() throws SyntaxException {
+	Statement statement() throws SyntaxException, NumberFormatException, IllegalNumberException {
 		//TODO
 		Token ftok = t;
 		Statement returnobj = null;
@@ -261,8 +264,7 @@ public class Parser {
 				if(next_t.isKind(ASSIGN)){
 					consume();
 					match(ASSIGN);
-					Expression assign_exprfollow = expression();
-					returnobj = new AssignmentStatement(ftok, new IdentLValue(ftok), assign_exprfollow);
+					returnobj = new AssignmentStatement(ftok, new IdentLValue(ftok), expression());
 				}
 				else{
 					returnobj = chain();
@@ -279,7 +281,7 @@ public class Parser {
 		//throw new UnimplementedFeatureException();
 	}
 
-	Chain chain() throws SyntaxException {
+	Chain chain() throws SyntaxException, NumberFormatException, IllegalNumberException {
 		//TODO
 		Token ftok = t;
 		Chain returnobj = chainElem();
@@ -294,7 +296,7 @@ public class Parser {
 		//throw new UnimplementedFeatureException();
 	}
 
-	ChainElem chainElem() throws SyntaxException {
+	ChainElem chainElem() throws SyntaxException, NumberFormatException, IllegalNumberException {
 		//TODO
 		ChainElem returnobj = null;
 		Token ftok = t;
@@ -306,10 +308,10 @@ public class Parser {
 			returnobj = new FilterOpChain(ftok, arg());
 		}else if(t.isKind(frameOp)){
 			consume();
-			returnobj = new FilterOpChain(ftok, arg());
+			returnobj = new FrameOpChain(ftok, arg());
 		}else if(t.isKind(imageOp)){
 			consume();
-			returnobj = new FilterOpChain(ftok, arg());
+			returnobj = new ImageOpChain(ftok, arg());
 		}else{
 			throw new SyntaxException("Exception @chainelem " + "saw " + t.kind + " expected ident or First-Filterop/frameop/imageop"  + " tokenNum: " + scanner.tokenNum + " & token at pos: " + t.pos + " "+ t.getLinePos().toString() );
 		}
@@ -317,22 +319,20 @@ public class Parser {
 		//throw new UnimplementedFeatureException();
 	}
 
-	Tuple arg() throws SyntaxException {
+	Tuple arg() throws SyntaxException, NumberFormatException, IllegalNumberException {
 		//TODO
 		Token ftok = t;
 		List<Expression> exprList = new ArrayList<Expression>(); 
 		if(t.isKind(LPAREN)){
 			consume();
-			expression();
+			exprList.add(expression());
 			while(t.isKind(COMMA)){
 				consume();
 				exprList.add(expression());
 			}
 			match(RPAREN);
 		}
-		else{
-			//do nothing now return;
-		}
+		//TODO removed else
 		return new Tuple(ftok, exprList);
 		//throw new UnimplementedFeatureException();
 	}
@@ -406,7 +406,7 @@ public class Parser {
 	private Token consume() throws SyntaxException {
 		Token tmp = t;
 		t = scanner.nextToken();
-		System.out.println(tmp.getText() + " ");
+		//System.out.println(tmp.getText() + " ");
 		return tmp;
 	}
 

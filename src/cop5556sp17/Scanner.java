@@ -124,7 +124,7 @@ public class Scanner {
 		 * @throws IllegalNumberException 
 		 */
 		//public int intVal() throws NumberFormatException, IllegalNumberException{
-		public int intVal() throws NumberFormatException {
+		public int intVal() throws NumberFormatException, IllegalNumberException {
 			//TODO IMPLEMENT THIS
 			int tokenvalue = 0;
 			if(this.kind==Kind.INT_LIT){
@@ -133,8 +133,8 @@ public class Scanner {
 					tokenvalue = Integer.parseInt(chars.substring(this.pos, this.pos+this.length));
 					
 				}catch(Exception E){
-					throw E;
-					//throw new IllegalNumberException("Number: "+chars.substring(this.pos, this.pos+this.length)+" out of int bounds at pos "+this.pos);
+					//throw E;
+					throw new IllegalNumberException("Number: "+chars.substring(this.pos, this.pos+this.length)+" out of int bounds at pos "+this.pos);
 				}
 			}
 			return tokenvalue;
