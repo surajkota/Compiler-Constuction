@@ -7,6 +7,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import cop5556sp17.AST.ASTNode;
+import cop5556sp17.AST.Program;
+import cop5556sp17.Parser.SyntaxException;
 import cop5556sp17.Scanner.IllegalCharException;
 import cop5556sp17.Scanner.IllegalNumberException;
 
@@ -152,4 +155,5 @@ public void testwithprining() throws IllegalCharException, IllegalNumberExceptio
 	//Scanner.Token token3 = scanner.nextToken();
 	//assertEquals(Scanner.Kind.EOF,token3.kind);
 }
+
 }

@@ -126,6 +126,5 @@ public class ASTTest {
 		assertEquals(IdentExpression.class, be.getE1().getClass());
 		assertEquals(PLUS, be.getOp().kind);*/
 	}
-
-
+	
 }
