@@ -406,7 +406,7 @@ public class Parser {
 	private Token consume() throws SyntaxException {
 		Token tmp = t;
 		t = scanner.nextToken();
-		//System.out.println(tmp.getText() + " ");
+		System.out.println(tmp.getText() + " ");
 		return tmp;
 	}
 

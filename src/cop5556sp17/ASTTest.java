@@ -70,13 +70,14 @@ public class ASTTest {
 		//String input = "abc file def, url int {frame htl boolean n while(ty/l+6>0){net<-6; hty->yloc;}}";//Program, block, dec, paramdec, statement ...all check
 		//String input = "abc {} abc {image img} abc{ sleep 2/3;} def url intege{} abc file def, url int {frame htl boolean n while(ty/l+6>0){net<-6; hty->yloc;}}";
 		//String input = "abc file def, url int {frame htl boolean n while(abc / 123 * (2)+ true & screenheight != 2/3*4&xyz-8/4|(screenwidth<jkl) >2<3*10>=6<=9==def){net<-6; hty->yloc;}}";
-		String input = "prog0 {}";
+		//String input = "prog0 {}";
+		String input = "p {\nboolean y \ny <- false;}";
 		Scanner scanner = new Scanner(input);
 		scanner.scan();
 		Parser parser = new Parser(scanner);
 		ASTNode ast = parser.program();
-		assertEquals(Program.class, ast.getClass());
-		//System.out.println(ast.toString());
+		//assertEquals(Program.class, ast.getClass());
+		System.out.println(ast.toString());
 		/*ast = parser.program();
 		System.out.println(ast.toString());
 		ast = parser.program();

@@ -53,7 +53,5 @@ public class TypeCheckVisitorTest {
 		thrown.expect(TypeCheckVisitor.TypeCheckException.class);
 		program.visit(v, null);		
 	}		
-
-
-
+	
 }
