@@ -5,7 +5,7 @@ import cop5556sp17.Scanner.Token;
 
 public class IdentLValue extends ASTNode {
 	
-	Dec typedec;
+	public Dec typedec;
 	public IdentLValue(Token firstToken) {
 		super(firstToken);
 		typeName = null;
@@ -13,13 +13,13 @@ public class IdentLValue extends ASTNode {
 	TypeName typeName;
 	public TypeName getTypeName(){
 		//return typedec.getTypeName();
-		return typeName;
+		return this.typeName;
 		
 	}
 	
 	public void setTypeName(TypeName rarg){
-		typedec.setTypeName(rarg);
-		typeName = rarg;
+		//typedec.setTypeName(rarg);
+		this.typeName = rarg;
 	}
 	
 	public void setindentLDec(Dec incoming){

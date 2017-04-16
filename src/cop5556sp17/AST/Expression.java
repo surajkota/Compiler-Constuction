@@ -12,12 +12,12 @@ public abstract class Expression extends ASTNode {
 		nodetype = null;
 	}
 	
-	public TypeName getTypeName(){
-		return nodetype;
+	public TypeName getType(){
+		return this.nodetype;
 	}
 	
-	public void setTypeName(TypeName rarg){
-		nodetype = rarg;
+	public void setType(TypeName rarg){
+		this.nodetype = rarg;
 	}
 	@Override
 	abstract public Object visit(ASTVisitor v, Object arg) throws Exception;

@@ -77,7 +77,7 @@ public class ASTTest {
 		Parser parser = new Parser(scanner);
 		ASTNode ast = parser.program();
 		//assertEquals(Program.class, ast.getClass());
-		System.out.println(ast.toString());
+		//System.out.println(ast.toString());
 		/*ast = parser.program();
 		System.out.println(ast.toString());
 		ast = parser.program();

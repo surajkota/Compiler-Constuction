@@ -88,45 +88,45 @@ public class TypeCheckVisitor implements ASTVisitor {
 		Token beto = binaryExpression.getOp();
 		e0.visit(this, null);
 		e1.visit(this, null);
-		TypeName e0type = e0.getTypeName();
-		TypeName e1type = e1.getTypeName();
+		TypeName e0type = e0.getType();
+		TypeName e1type = e1.getType();
 		//System.out.println(e0type + " "+ e1type + e0.getFirstToken().getText() + " " + e1.getFirstToken().getText());
 		if(beto.isKind(EQUAL, NOTEQUAL)){
 			if(e0type.isType(e1type)){
-				binaryExpression.setTypeName(TypeName.BOOLEAN);
+				binaryExpression.setType(TypeName.BOOLEAN);
 			}else{
 				throw new TypeCheckException("Illegal operator for expression :" + e0.firstToken);
 			}
 		}else if(beto.isKind(LT, LE, GT, GE) ){
 			if(e0type.isType(TypeName.BOOLEAN) && e1type.isType(TypeName.BOOLEAN)){
-				binaryExpression.setTypeName(TypeName.BOOLEAN);
+				binaryExpression.setType(TypeName.BOOLEAN);
 			}else if(e0type.isType(TypeName.INTEGER) && e1type.isType(TypeName.INTEGER)){
-				binaryExpression.setTypeName(TypeName.BOOLEAN);
+				binaryExpression.setType(TypeName.BOOLEAN);
 			}else{
 				throw new TypeCheckException("Illegal operator for expression :" + e0.firstToken);
 			}
 		}else if(beto.isKind(PLUS, MINUS)){
 			
 			if(e0type.isType(TypeName.INTEGER) && e1type.isType(TypeName.INTEGER)){
-				binaryExpression.setTypeName(TypeName.INTEGER);
+				binaryExpression.setType(TypeName.INTEGER);
 			}else if (e0type.isType(TypeName.IMAGE) && e1type.isType(TypeName.IMAGE)){
-				binaryExpression.setTypeName(TypeName.IMAGE);
+				binaryExpression.setType(TypeName.IMAGE);
 			}else{
 				throw new TypeCheckException("Illegal operator for expression :" + e0.firstToken);
 			}
 		}else if(beto.isKind(TIMES)){
 			
 			if(e0type.isType(TypeName.INTEGER) && e1type.isType(TypeName.INTEGER)){
-				binaryExpression.setTypeName(TypeName.INTEGER);
+				binaryExpression.setType(TypeName.INTEGER);
 			}else if (e0type.isType(TypeName.INTEGER, TypeName.IMAGE) && e1type.isType(TypeName.INTEGER, TypeName.IMAGE)){
-				binaryExpression.setTypeName(TypeName.IMAGE);
+				binaryExpression.setType(TypeName.IMAGE);
 			}else{
 				throw new TypeCheckException("Illegal operator for expression :" + e0.firstToken);
 			}
 		}else if(beto.isKind(DIV)){
 			
 			if(e0type.isType(TypeName.INTEGER) && e1type.isType(TypeName.INTEGER)){
-				binaryExpression.setTypeName(TypeName.INTEGER);
+				binaryExpression.setType(TypeName.INTEGER);
 			}else{
 				throw new TypeCheckException("Illegal operator for expression :" + e0.firstToken);
 			}
@@ -162,7 +162,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitBooleanLitExpression(BooleanLitExpression booleanLitExpression, Object arg) throws Exception {
 		// TODO Auto-generated method stub`
-		booleanLitExpression.setTypeName(TypeName.BOOLEAN);
+		booleanLitExpression.setType(TypeName.BOOLEAN);
 		return null;
 	}
 
@@ -224,9 +224,10 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitIdentExpression(IdentExpression identExpression, Object arg) throws Exception {
 		// TODO Auto-generated method stub
 		Dec decofident = symtab.lookup(identExpression.firstToken.getText());
+		identExpression.typedec=decofident;
 		if(decofident != null){
-			System.out.println(decofident.getTypeName());
-			identExpression.setTypeName(Type.getTypeName(decofident.getFirstToken()));
+			//System.out.println(decofident.getTypeName());
+			identExpression.setType(Type.getTypeName(decofident.getFirstToken()));
 		}else{
 			throw new TypeCheckException("Idetifier declaration missing or not visible in current scope: " + identExpression.firstToken.getText() + " at " + identExpression.firstToken.getLinePos());
 		}
@@ -237,7 +238,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitIfStatement(IfStatement ifStatement, Object arg) throws Exception {
 		// TODO Auto-generated method stub
 		ifStatement.getE().visit(this, null);
-		if(ifStatement.getE().getTypeName().isType(TypeName.BOOLEAN)){
+		if(ifStatement.getE().getType().isType(TypeName.BOOLEAN)){
 			boolean nouse = false;
 		}else{
 			throw new TypeCheckException("If statemnt expression not boolean: " + ifStatement.firstToken.getLinePos() + " pos: " + ifStatement.firstToken.pos);
@@ -249,7 +250,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitIntLitExpression(IntLitExpression intLitExpression, Object arg) throws Exception {
 		// TODO Auto-generated method stub
-		intLitExpression.setTypeName(TypeName.INTEGER);
+		intLitExpression.setType(TypeName.INTEGER);
 		return null;
 	}
 
@@ -257,7 +258,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitSleepStatement(SleepStatement sleepStatement, Object arg) throws Exception {
 		// TODO Auto-generated method stub
 		sleepStatement.getE().visit(this, null);
-		if(sleepStatement.getE().getTypeName().isType(TypeName.INTEGER)){
+		if(sleepStatement.getE().getType().isType(TypeName.INTEGER)){
 			boolean nouse = false;
 		}else{
 			throw new TypeCheckException("Sleep statemnt rValue not integer: " + sleepStatement.firstToken.getLinePos() + " pos: " + sleepStatement.firstToken.pos);
@@ -269,7 +270,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitWhileStatement(WhileStatement whileStatement, Object arg) throws Exception {
 		// TODO Auto-generated method stub
 		whileStatement.getE().visit(this, null);
-		if(whileStatement.getE().getTypeName().isType(TypeName.BOOLEAN)){
+		if(whileStatement.getE().getType().isType(TypeName.BOOLEAN)){
 			boolean nouse = false;
 		}else{
 			throw new TypeCheckException("While statemnt expression not boolean: " + whileStatement.firstToken.getLinePos() + " pos: " + whileStatement.firstToken.pos);
@@ -311,9 +312,9 @@ public class TypeCheckVisitor implements ASTVisitor {
 		// TODO Auto-generated method stub
 		assignStatement.getVar().visit(this, null);
 		assignStatement.getE().visit(this, null);
-		System.out.println("x"+assignStatement.getVar().getTypeName());
-		System.out.println("x" +assignStatement.getE().getTypeName());
-		if(assignStatement.getVar().getTypeName().isType(assignStatement.getE().getTypeName())){
+		//System.out.println("x"+assignStatement.getVar().getTypeName());
+		//System.out.println("x" +assignStatement.getE().getType());
+		if(assignStatement.getVar().getTypeName().isType(assignStatement.getE().getType())){
 			boolean nouse = false;
 		}else{
 			throw new TypeCheckException("LValue and RValue type mismatch in assignment statement: " + assignStatement.getVar().getText());
@@ -328,7 +329,8 @@ public class TypeCheckVisitor implements ASTVisitor {
 		Dec decofident = symtab.lookup(identX.getText());
 		
 		if(decofident != null){
-			identX.setindentLDec(decofident);
+			//identX.setindentLDec(decofident);
+			identX.typedec=decofident;
 			identX.setTypeName(Type.getTypeName(decofident.getFirstToken()));
 		}else{
 			throw new TypeCheckException("Idetifier declaration missing or not visible in current scope: " + identX.firstToken.getText());
@@ -341,6 +343,8 @@ public class TypeCheckVisitor implements ASTVisitor {
 		// TODO Auto-generated method stub
 		if(symtab.insert(paramDec.getIdent().getText(), paramDec)==false){
 			throw new TypeCheckException("Variable redeclaration not permitted: " + paramDec.getIdent().getText());
+		}else{
+			paramDec.setTypeName(Type.getTypeName(paramDec.firstToken));
 		}
 		return null;
 	}
@@ -348,7 +352,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitConstantExpression(ConstantExpression constantExpression, Object arg) {
 		// TODO Auto-generated method stub
-		constantExpression.setTypeName(TypeName.INTEGER); 
+		constantExpression.setType(TypeName.INTEGER); 
 		return null;
 	}
 
@@ -380,7 +384,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 			List<Expression> exprlist = tuple.getExprList();
 			for(int i=0;i<listsize;i++){
 				exprlist.get(i).visit(this, null);
-				if(exprlist.get(i).getTypeName().isType(TypeName.INTEGER)){
+				if(exprlist.get(i).getType().isType(TypeName.INTEGER)){
 					boolean nouse = false;
 				}else{
 					throw new TypeCheckException("Tuple Expression type should be integer: " + exprlist.get(i).getFirstToken().getText() + " at " + exprlist.get(i).getFirstToken().getLinePos());

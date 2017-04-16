@@ -7,7 +7,8 @@ public class Dec extends ASTNode {
 	
 	final Token ident;
 	private TypeName nodetype;
-
+	public int decslot;
+	
 	public Dec(Token firstToken, Token ident) {
 		super(firstToken);
 
@@ -30,13 +31,22 @@ public class Dec extends ASTNode {
 	
 	
 	public TypeName getTypeName(){
-		return nodetype;
+		return this.nodetype;
 	}
 	
 	public void setTypeName(TypeName rarg){
-		nodetype = rarg;
+		this.nodetype = rarg;
 	}
-
+	
+	public int getslot(){
+		return decslot;
+	}
+	
+	public void setslot(int rarg){
+		decslot = rarg;
+	}
+	
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

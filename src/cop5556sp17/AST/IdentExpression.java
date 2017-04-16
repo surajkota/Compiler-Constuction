@@ -3,7 +3,8 @@ package cop5556sp17.AST;
 import cop5556sp17.Scanner.Token;
 
 public class IdentExpression extends Expression {
-
+	
+	public Dec typedec;
 	public IdentExpression(Token firstToken) {
 		super(firstToken);
 	}

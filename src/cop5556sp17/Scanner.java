@@ -525,8 +525,8 @@ public class Scanner {
 	public void printall(){
 		for(int i=0;i<tokens.size();i++){
 			Token t = tokens.get(i);
-			System.out.println("Kind: " + t.kind.getText() + " token: "+t.getText() + " pos: "+t.pos + " len: "+t.length);
-			System.out.println(t.getLinePos().toString());
+			//System.out.println("Kind: " + t.kind.getText() + " token: "+t.getText() + " pos: "+t.pos + " len: "+t.length);
+			//System.out.println(t.getLinePos().toString());
 			//System.out.println(" Line: "+t.getLinePos().line+" posinLine: "+t.getLinePos().posInLine);
 		}
 	}

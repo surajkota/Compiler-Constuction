@@ -9,11 +9,11 @@ public abstract class Chain extends Statement {
 	private TypeName nodetype;
 	
 	public TypeName getTypeName(){
-		return nodetype;
+		return this.nodetype;
 	}
 	
 	public void setTypeName(TypeName rarg){
-		nodetype = rarg;
+		this.nodetype = rarg;
 	}
 	
 	public Chain(Token firstToken) {
