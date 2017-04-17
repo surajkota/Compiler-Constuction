@@ -383,7 +383,7 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 			toinvoke = "convolveOp";
 		}
 		//TODO Random from discussion, how to invoke correctly ?
-		chaininfoexchange ex = new chaininfoexchange();
+		chaininfoexchange ex = (chaininfoexchange) arg;
 		
 		if(ex.nodekind.equals(Kind.ARROW)){
 			mv.visitInsn(ACONST_NULL);
@@ -429,7 +429,7 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	public Object visitIdentChain(IdentChain identChain, Object arg) throws Exception {
 		//assert false : "not yet implemented";
 		//TODO check for getfield
-		chaininfoexchange ex = new chaininfoexchange();
+		chaininfoexchange ex = (chaininfoexchange) arg;
 		if(ex.lhsrhs.equals("left")){
 			if(identChain.typedec.getTypeName().equals(TypeName.BOOLEAN) || identChain.typedec.getTypeName().equals(TypeName.INTEGER)){
 				if(identChain.typedec instanceof ParamDec){
