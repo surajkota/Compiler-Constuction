@@ -3,7 +3,7 @@ package cop5556sp17.AST;
 import cop5556sp17.Scanner.Token;
 
 public class IdentChain extends ChainElem {
-
+	public Dec typedec;
 	public IdentChain(Token firstToken) {
 		super(firstToken);
 	}

@@ -56,7 +56,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 					binaryChain.setTypeName(TypeName.FRAME);
 				}else if(Rchaintype.isType(TypeName.FILE)){
 					binaryChain.setTypeName(TypeName.NONE);
-				}else if(rchain instanceof IdentChain){
+				}else if(rchain instanceof IdentChain && rchain.getTypeName().equals(TypeName.IMAGE)){
 					binaryChain.setTypeName(TypeName.IMAGE);
 				}else if(rchain instanceof ImageOpChain && rchain.getFirstToken().isKind(OP_WIDTH, OP_HEIGHT)){
 					binaryChain.setTypeName(TypeName.INTEGER);
@@ -66,6 +66,10 @@ public class TypeCheckVisitor implements ASTVisitor {
 					binaryChain.setTypeName(TypeName.IMAGE);
 				}else{
 					throw new TypeCheckException("Binary chain mismatch :" + lchain.getFirstToken().getText() + " at " + lchain.getFirstToken().getLinePos());
+				}
+			}else if(Lchaintype.isType(TypeName.INTEGER)){
+				if(rchain instanceof IdentChain && rchain.getTypeName().equals(TypeName.INTEGER)){
+					binaryChain.setTypeName(TypeName.FRAME);
 				}
 			}else{
 				throw new TypeCheckException("Binary not match condition :" + lchain.getFirstToken().getText() + " at " + lchain.getFirstToken().getLinePos());
@@ -127,10 +131,27 @@ public class TypeCheckVisitor implements ASTVisitor {
 			
 			if(e0type.isType(TypeName.INTEGER) && e1type.isType(TypeName.INTEGER)){
 				binaryExpression.setType(TypeName.INTEGER);
+			}else if(e0type.isType(TypeName.IMAGE) && e1type.isType(TypeName.INTEGER)){
+				binaryExpression.setType(TypeName.IMAGE);
 			}else{
 				throw new TypeCheckException("Illegal operator for expression :" + e0.firstToken);
 			}
-		}else{
+		}else if(beto.isKind(OR, AND)){
+			if(e0type.isType(TypeName.BOOLEAN) && e1type.isType(TypeName.BOOLEAN)){
+				binaryExpression.setType(TypeName.BOOLEAN);
+			}else{
+				throw new TypeCheckException("Illegal operator for expression :" + e0.firstToken);
+			}
+		}else if(beto.isKind(MOD)){
+			if(e0type.isType(TypeName.INTEGER) && e1type.isType(TypeName.INTEGER)){
+				binaryExpression.setType(TypeName.INTEGER);
+			}else if(e0type.isType(TypeName.IMAGE) && e1type.isType(TypeName.INTEGER)){
+				binaryExpression.setType(TypeName.IMAGE);
+			}else{
+				throw new TypeCheckException("Illegal operator for expression :" + e0.firstToken);
+			}
+		}
+		else{
 			throw new TypeCheckException("Illegal operator for expression :" + e0.firstToken);
 		}
 		return null;
@@ -214,6 +235,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 		Dec decofident = symtab.lookup(identChain.firstToken.getText());
 		if(decofident != null){
 			identChain.setTypeName(Type.getTypeName(decofident.getFirstToken()));
+			identChain.typedec = decofident;
 		}else{
 			throw new TypeCheckException("Idetifier declaration missing or not visible in current scope: " + identChain.firstToken.getText() + " at " + identChain.firstToken.getLinePos());
 		}
