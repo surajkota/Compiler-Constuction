@@ -82,7 +82,6 @@ public class SymbolTable {
 				testscope = identfound.get(i).scopenum;
 				if(scope_stack.contains(testscope)){
 					retd = identfound.get(i).details;
-					System.out.println(testscope);
 					//break;
 				}
 			}

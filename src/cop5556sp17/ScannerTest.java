@@ -12,6 +12,7 @@ import cop5556sp17.AST.Program;
 import cop5556sp17.Parser.SyntaxException;
 import cop5556sp17.Scanner.IllegalCharException;
 import cop5556sp17.Scanner.IllegalNumberException;
+import cop5556sp17.Scanner.Token;
 
 public class ScannerTest {
 
@@ -155,5 +156,4 @@ public void testwithprining() throws IllegalCharException, IllegalNumberExceptio
 	//Scanner.Token token3 = scanner.nextToken();
 	//assertEquals(Scanner.Kind.EOF,token3.kind);
 }
-
 }

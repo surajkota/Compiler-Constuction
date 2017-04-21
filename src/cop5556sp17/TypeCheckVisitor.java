@@ -34,8 +34,6 @@ public class TypeCheckVisitor implements ASTVisitor {
 		rchain.visit(this, null);
 		TypeName Lchaintype = lchain.getTypeName();
 		TypeName Rchaintype = rchain.getTypeName();
-		//System.out.println(Lchaintype);
-		//System.out.println(Rchaintype);
 		if(betop.isKind(Kind.ARROW)){
 			if(Lchaintype.isType(TypeName.URL) || Lchaintype.isType(TypeName.FILE)){
 				if(Rchaintype.isType(TypeName.IMAGE)){
@@ -94,7 +92,6 @@ public class TypeCheckVisitor implements ASTVisitor {
 		e1.visit(this, null);
 		TypeName e0type = e0.getType();
 		TypeName e1type = e1.getType();
-		//System.out.println(e0type + " "+ e1type + e0.getFirstToken().getText() + " " + e1.getFirstToken().getText());
 		if(beto.isKind(EQUAL, NOTEQUAL)){
 			if(e0type.isType(e1type)){
 				binaryExpression.setType(TypeName.BOOLEAN);
@@ -248,7 +245,6 @@ public class TypeCheckVisitor implements ASTVisitor {
 		Dec decofident = symtab.lookup(identExpression.firstToken.getText());
 		identExpression.typedec=decofident;
 		if(decofident != null){
-			//System.out.println(decofident.getTypeName());
 			identExpression.setType(Type.getTypeName(decofident.getFirstToken()));
 		}else{
 			throw new TypeCheckException("Idetifier declaration missing or not visible in current scope: " + identExpression.firstToken.getText() + " at " + identExpression.firstToken.getLinePos());
@@ -310,7 +306,6 @@ public class TypeCheckVisitor implements ASTVisitor {
 			throw new TypeCheckException("Variable redeclaration not permitted: " + declaration.getIdent().getText());
 		}else{
 			declaration.setTypeName(Type.getTypeName(declaration.firstToken));
-			//System.out.println(declaration.getTypeName());
 		}
 		return null;
 	}
@@ -334,8 +329,6 @@ public class TypeCheckVisitor implements ASTVisitor {
 		// TODO Auto-generated method stub
 		assignStatement.getVar().visit(this, null);
 		assignStatement.getE().visit(this, null);
-		//System.out.println("x"+assignStatement.getVar().getTypeName());
-		//System.out.println("x" +assignStatement.getE().getType());
 		if(assignStatement.getVar().getTypeName().isType(assignStatement.getE().getType())){
 			boolean nouse = false;
 		}else{
