@@ -10,9 +10,13 @@ import java.net.URL;
 public class Name implements Runnable {
 	//public URL u;
 	public URL u;
+	public URL f;
+	public int a;
 
 	public Name(String[] args) {
 		this.u = PLPRuntimeImageIO.getURL(args, 0);
+		this.f = PLPRuntimeImageIO.getURL(args, 0);
+		this.a = Integer.parseInt(args[2]);
 	}
 
 	public static void main(String[] args) {
@@ -20,22 +24,21 @@ public class Name implements Runnable {
 	}
 
 	public void run() {
-		BufferedImage j = null;
-		PLPRuntimeFrame f = null;
-		j = PLPRuntimeImageOps.copyImage(PLPRuntimeImageIO.readFromURL(this.u));
-		f = PLPRuntimeFrame.createOrSetFrame((BufferedImage) j, f);
-		f.showImage();
-		try {
-			Thread.sleep((long)2000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+//		try {
+//			Thread.sleep((long)1000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+		PLPRuntimeLog.globalLogAddEntry("\nentering run");
+		BufferedImage img1 = null;
+		BufferedImage img2 = null;
+		PLPRuntimeFrame fr = null;
+		img1 = PLPRuntimeImageIO.readFromURL(this.u);
+		img2 = PLPRuntimeImageIO.readFromURL(this.f);
+		img2 = PLPRuntimeImageOps.sub(img2, img1);
+
 		}
-		int x;
-		int y;
-		x = f.getXVal();
-		y = f.getYVal();
-		f.moveFrame(x+100, y-100);
-		f.showImage();
-	}
 }

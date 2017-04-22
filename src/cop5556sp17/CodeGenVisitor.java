@@ -284,6 +284,7 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		}else if(binaryExpression.getOp().isKind(MINUS)){
 			if(binaryExpression.getType().equals(TypeName.IMAGE)){
 				mv.visitMethodInsn(INVOKESTATIC, PLPRuntimeImageOps.JVMName, "sub", PLPRuntimeImageOps.subSig, false);
+				
 			}else{
 				mv.visitInsn(ISUB);
 			}
@@ -306,11 +307,23 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 			mv.visitJumpInsn(IF_ICMPLE,conditionyes);
 			mv.visitInsn(ICONST_0);
 		}else if(binaryExpression.getOp().isKind(EQUAL)){
-			mv.visitJumpInsn(IF_ICMPEQ,conditionyes);
-			mv.visitInsn(ICONST_0);
+			if(binaryExpression.getE0().getType().isType(TypeName.INTEGER, TypeName.BOOLEAN) || binaryExpression.getE1().getType().isType(TypeName.INTEGER, TypeName.BOOLEAN)){
+				mv.visitJumpInsn(IF_ICMPEQ,conditionyes);
+				mv.visitInsn(ICONST_0);
+			}else {
+				mv.visitJumpInsn(IF_ACMPEQ,conditionyes);
+				mv.visitInsn(ICONST_0);
+			}
+			
 		}else if(binaryExpression.getOp().isKind(NOTEQUAL)){
-			mv.visitJumpInsn(IF_ICMPNE,conditionyes);
-   		 	mv.visitInsn(ICONST_0);
+			if(binaryExpression.getE0().getType().isType(TypeName.INTEGER, TypeName.BOOLEAN) || binaryExpression.getE1().getType().isType(TypeName.INTEGER, TypeName.BOOLEAN)){
+				mv.visitJumpInsn(IF_ICMPNE,conditionyes);
+	   		 	mv.visitInsn(ICONST_0);
+			}else {
+				mv.visitJumpInsn(IF_ACMPNE,conditionyes);
+				mv.visitInsn(ICONST_0);
+			}
+			
    		}else if(binaryExpression.getOp().isKind(OR)){
 			mv.visitInsn(IOR);
 		}else if(binaryExpression.getOp().isKind(AND)){
@@ -392,19 +405,19 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	public Object visitFilterOpChain(FilterOpChain filterOpChain, Object arg) throws Exception {
 		//assert false : "not yet implemented";
 		String toinvoke="";
-		if(filterOpChain.getFirstToken().kind == Kind.OP_BLUR){
+		if(filterOpChain.getFirstToken().isKind(Kind.OP_BLUR)){
 			toinvoke = "blurOp";
 		}
-		else if(filterOpChain.getFirstToken().kind == Kind.OP_GRAY){
+		else if(filterOpChain.getFirstToken().isKind(Kind.OP_GRAY)){
 			toinvoke = "grayOp";
 		}
-		else if(filterOpChain.getFirstToken().kind == Kind.OP_CONVOLVE){
+		else if(filterOpChain.getFirstToken().isKind(Kind.OP_CONVOLVE)){
 			toinvoke = "convolveOp";
 		}
 		//TODO Random from discussion, how to invoke correctly ?
 		chaininfoexchange ex = (chaininfoexchange) arg;
-		
-		if(filterOpChain.getFirstToken().isKind(OP_GRAY) && ex.lhsrhs.equals("right")){
+		//TODO changed condition here
+		if(ex.nodekind.equals(BARARROW) && filterOpChain.getFirstToken().isKind(Kind.OP_GRAY)){
 			mv.visitInsn(DUP);
 		}else{
 			mv.visitInsn(ACONST_NULL);
@@ -493,7 +506,7 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 				if(identChain.typedec instanceof ParamDec){
 					mv.visitVarInsn(ALOAD, 0);
 					//TODO check if swap is required
-					//mv.visitInsn(SWAP);
+					mv.visitInsn(SWAP);
 					mv.visitFieldInsn(PUTFIELD, className, identChain.getFirstToken().getText(), identChain.typedec.getTypeName().getJVMTypeDesc());
                  }else{
                      mv.visitVarInsn(ISTORE, identChain.typedec.getslot());
